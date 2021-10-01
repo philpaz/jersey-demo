@@ -16,7 +16,7 @@ Dockerfile included
 
 Docker image repository tag convention, before repository push
 
-2. docker tag springio-demo gearforthought/springio-demo:springio-demo
+2. docker tag springio-demo yourDocker/springio-demo:springio-demo
 
 3. docker push yourDocker/springio-demo:springio-demo
 
