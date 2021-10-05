@@ -5,7 +5,8 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
- 
+import java.util.UUID;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -27,7 +28,7 @@ import org.springframework.http.MediaType;
 
 public class UserResource {
 	
-	    private static Map<Integer, User> DB = new HashMap<>(); 
+	    private static Map<UUID, User> DB = new HashMap<>(); 
 	     
 	    @GET
 	    @Produces(MediaType.APPLICATION_JSON_VALUE)
@@ -49,7 +50,8 @@ public class UserResource {
 	        if(user.getFirstName() == null || user.getLastName() == null) {  	
 	            return Response.status(400).entity("Please provide all mandatory inputs").build();
 	        }
-	        user.setId(DB.values().size()+1);
+	        //user.setId(DB.values().size()+1);
+	        user.setId(UUID.randomUUID());
 	        user.setUri("/user-management/"+user.getId());
 	        DB.put(user.getId(), user);
 	        return Response.status(201).contentLocation(new URI(user.getUri())).build();
@@ -88,10 +90,14 @@ public class UserResource {
 	 
 	    @DELETE
 	    @Path("/{id}")
-	    public Response deleteUser(@PathParam("id") int id) throws URISyntaxException {
+	    public Response deleteUser(@PathParam("id") UUID id) throws URISyntaxException {
 	        User user = DB.get(id);
 	        if(user != null) {
 	            DB.remove(user.getId());
+	            
+	            //for loop through collection, get(id) - 1, decrement setID and setUri
+	            
+	            
 	            return Response.status(200).build();
 	        }
 	        return Response.status(404).build();
@@ -100,22 +106,25 @@ public class UserResource {
 	    static
 	    {
 	        User user1 = new User();
-	        user1.setId(1);
+	        UUID uuid1 = UUID.randomUUID();
+	        user1.setId(uuid1);
 	        user1.setFirstName("John");
 	        user1.setLastName("Wick");
-	        user1.setUri("/user-management/1");
+	        user1.setUri("/user-management/" + uuid1);
 	 
+	        UUID uuid2 = UUID.randomUUID();
 	        User user2 = new User();
-	        user2.setId(2);
+	        user2.setId(uuid2);
 	        user2.setFirstName("Harry");
 	        user2.setLastName("Potter");
-	        user2.setUri("/user-management/2");
+	        user2.setUri("/user-management/" + uuid2);
 	 
+	        UUID uuid3 = UUID.randomUUID();
 	        User user3 = new User();
-	        user3.setId(3);
+	        user3.setId(uuid3);
 	        user3.setFirstName("Ted");
-	        user3.setLastName("Nugget");
-	        user3.setUri("/user-management/3");
+	        user3.setLastName("Nugent");
+	        user3.setUri("/user-management/" + uuid3);
 	        
 	        DB.put(user1.getId(), user1);
 	        DB.put(user2.getId(), user2);

@@ -1,6 +1,7 @@
 package com.example.demo;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -15,7 +16,7 @@ public class User implements Serializable {
     private static final long serialVersionUID = 1L;
   
     @XmlAttribute(name = "id")
-    private int id;
+    private UUID id;
   
     @XmlAttribute(name="uri")
     private String uri;
@@ -26,11 +27,11 @@ public class User implements Serializable {
     @XmlElement(name = "lastName")
     private String lastName;
   
-    public int getId() {
+    public UUID getId() {
         return id;
     }
-    public void setId(int id) {
-        this.id = id;
+    public void setId(UUID uuid) {
+        this.id = uuid;
     }
     public String getFirstName() {
         return firstName;
