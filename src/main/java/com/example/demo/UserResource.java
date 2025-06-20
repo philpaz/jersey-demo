@@ -60,9 +60,9 @@ public class UserResource {
 	    @GET
 	    @Path("/{id}")
 	    @Produces(MediaType.APPLICATION_JSON_VALUE)
-	    public Response getUserById(@PathParam("id") int id) throws URISyntaxException 
+            public Response getUserById(@PathParam("id") UUID id) throws URISyntaxException
 	    {
-	        User user = DB.get(id);
+                User user = DB.get(id);
 	        if(user == null) {
 	            return Response.status(404).build();
 	        }
@@ -76,12 +76,12 @@ public class UserResource {
 	    @Path("/{id}")
 	    @Consumes(MediaType.APPLICATION_JSON_VALUE)
 	    @Produces(MediaType.APPLICATION_JSON_VALUE)
-	    public Response updateUser(@PathParam("id") int id, User user) throws URISyntaxException 
+            public Response updateUser(@PathParam("id") UUID id, User user) throws URISyntaxException
 	    {
-	        User temp = DB.get(id);
-	        if(user == null) {
-	            return Response.status(404).build();
-	        }
+                User temp = DB.get(id);
+                if (temp == null) {
+                    return Response.status(404).build();
+                }
 	        temp.setFirstName(user.getFirstName());
 	        temp.setLastName(user.getLastName());
 	        DB.put(temp.getId(), temp);
