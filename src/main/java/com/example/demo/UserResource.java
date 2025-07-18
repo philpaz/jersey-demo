@@ -3,8 +3,8 @@ package com.example.demo;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.UUID;
 
 import javax.ws.rs.Consumes;
@@ -28,7 +28,8 @@ import org.springframework.http.MediaType;
 
 public class UserResource {
 	
-	    private static Map<UUID, User> DB = new HashMap<>(); 
+            private static final int MAX_CAPACITY = 1000;
+            private static Map<UUID, User> DB = new ConcurrentHashMap<>();
 	     
 	    @GET
 	    @Produces(MediaType.APPLICATION_JSON_VALUE)
@@ -50,6 +51,9 @@ public class UserResource {
 	        if(user.getFirstName() == null || user.getLastName() == null) {  	
 	            return Response.status(400).entity("Please provide all mandatory inputs").build();
 	        }
+                if (DB.size() >= MAX_CAPACITY) {
+                    return Response.status(507).entity("Maximum user capacity reached").build();
+                }
 	        //user.setId(DB.values().size()+1);
 	        user.setId(UUID.randomUUID());
 	        user.setUri("/user-management/"+user.getId());

@@ -11,6 +11,7 @@ You can click the Preview link to take a look at your changes.
 Springboot 2.5.5, Jersey eample
 Local persistence, private static Map<Integer, User> DB = new HashMap<>(); 
 Dockerfile included
+Maximum of 1000 users stored in memory; attempts to exceed this limit return HTTP 507.
 
 1. docker build -t springio-demo .
 
