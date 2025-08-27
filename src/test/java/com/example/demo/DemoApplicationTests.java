@@ -1,17 +1,12 @@
 package com.example.demo;
 
-
-import java.io.IOException;
-
-import javax.ws.rs.ClientErrorException;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -22,25 +17,13 @@ class DemoApplicationTests {
      = "http://localhost:8080/users";
 
 	@Test
-	void getUsers() throws ClientErrorException, IOException {
-		
-        HttpUriRequest request = new HttpGet(SERVICE_URL);
-
-        /**
-        HttpResponse httpResponse = HttpClientBuilder
-          .create()
-          .build()
-          .execute(request);
-        
-        
-        System.out.println("****************** Status coming back from http:8080 ************************ " +  httpResponse
-                .getStatusLine()
-                .getStatusCode());
-
-        assertEquals(httpResponse
-          .getStatusLine()
-          .getStatusCode(), HttpStatus.SC_OK);
-          **/		 
+	void getUsers() throws IOException {
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            var response = client.execute(new HttpGet(SERVICE_URL));
+            
+            System.out.println("Response status: " + response.getStatusLine().getStatusCode());
+            assertEquals(200, response.getStatusLine().getStatusCode());
+        }
 	}
 
 }

@@ -3,28 +3,27 @@ package com.example.demo;
 import java.io.Serializable;
 import java.util.UUID;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.json.bind.annotation.JsonbProperty;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
   
-@XmlAccessorType(XmlAccessType.NONE)
 @XmlRootElement(name = "user")
 public class User implements Serializable {
-  
     private static final long serialVersionUID = 1L;
   
-    @XmlAttribute(name = "id")
+    @JsonbProperty("id")
     private UUID id;
   
-    @XmlAttribute(name="uri")
+    @JsonbProperty("uri")
     private String uri;
   
-    @XmlElement(name = "firstName")
+    @JsonbProperty("firstName")
     private String firstName;
   
-    @XmlElement(name = "lastName")
+    @JsonbProperty("lastName")
     private String lastName;
   
     public UUID getId() {

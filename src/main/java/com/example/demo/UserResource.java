@@ -7,20 +7,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Response;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
-
-import org.springframework.http.MediaType;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
  
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlRootElement(name = "users")
@@ -31,16 +30,24 @@ public class UserResource {
 	    private static Map<UUID, User> DB = new HashMap<>(); 
 	     
 	    @GET
-	    @Produces(MediaType.APPLICATION_JSON_VALUE)
-	    public Users getAllUsers() {
+	    @Produces(MediaType.APPLICATION_JSON)
+	    public Response getAllUsers() {
+	        System.out.println("Getting all users, DB size: " + DB.size());
+	        DB.forEach((id, user) -> {
+	            System.out.println("User: " + user.getFirstName() + " " + user.getLastName() + " (ID: " + id + ")");
+	        });
+	        
 	        Users users = new Users();
 	        users.setUsers(new ArrayList<>(DB.values()));
-	        return users;
+	        return Response
+	                .ok(users)
+	                .header("Content-Type", MediaType.APPLICATION_JSON)
+	                .build();
 	    }
 	     
 	    @POST
-	    @Consumes(MediaType.APPLICATION_JSON_VALUE)
-	    @Produces(MediaType.APPLICATION_JSON_VALUE)
+	    @Consumes(MediaType.APPLICATION_JSON)
+	    @Produces(MediaType.APPLICATION_JSON)
 	    public Response createUser(User user) throws URISyntaxException 
 	    {
 	    	
@@ -50,16 +57,32 @@ public class UserResource {
 	        if(user.getFirstName() == null || user.getLastName() == null) {  	
 	            return Response.status(400).entity("Please provide all mandatory inputs").build();
 	        }
-	        //user.setId(DB.values().size()+1);
+	        
+	        // Check for existing user with same first and last name
+	        boolean userExists = DB.values().stream()
+	            .anyMatch(u -> u.getFirstName().equalsIgnoreCase(user.getFirstName()) && 
+                              u.getLastName().equalsIgnoreCase(user.getLastName()));
+	        
+	        if (userExists) {
+	            return Response.status(409) // 409 Conflict
+	                .entity("A user with the same first and last name already exists")
+	                .build();
+	        }
+	        
 	        user.setId(UUID.randomUUID());
-	        user.setUri("/user-management/"+user.getId());
+	        user.setUri("/users/" + user.getId());
 	        DB.put(user.getId(), user);
-	        return Response.status(201).contentLocation(new URI(user.getUri())).build();
+	        
+	        // Return the created user in the response
+	        return Response.status(Response.Status.CREATED)
+	                .entity(user)
+	                .contentLocation(new URI(user.getUri()))
+	                .build();
 	    }
 	 
 	    @GET
 	    @Path("/{id}")
-	    @Produces(MediaType.APPLICATION_JSON_VALUE)
+	    @Produces(MediaType.APPLICATION_JSON)
             public Response getUserById(@PathParam("id") UUID id) throws URISyntaxException
 	    {
                 User user = DB.get(id);
@@ -74,8 +97,8 @@ public class UserResource {
 	 
 	    @PUT
 	    @Path("/{id}")
-	    @Consumes(MediaType.APPLICATION_JSON_VALUE)
-	    @Produces(MediaType.APPLICATION_JSON_VALUE)
+	    @Consumes(MediaType.APPLICATION_JSON)
+	    @Produces(MediaType.APPLICATION_JSON)
             public Response updateUser(@PathParam("id") UUID id, User user) throws URISyntaxException
 	    {
                 User temp = DB.get(id);
