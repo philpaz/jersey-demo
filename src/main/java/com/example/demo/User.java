@@ -4,10 +4,6 @@ import java.io.Serializable;
 import java.util.UUID;
 
 import jakarta.json.bind.annotation.JsonbProperty;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlAttribute;
-import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
   
 @XmlRootElement(name = "user")
